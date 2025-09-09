@@ -1,0 +1,39 @@
+<!-- cert_verification_system/app/templates/auth/institution_dashboard.html -->
+{% extends "base_template.html" %}
+{% block title %}Institution Dashboard - CertVerify{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="mb-2"><i class="fas fa-university text-primary"></i> {{ current_user.institution_name }}</h1>
+    <p>Institution Code: <span class="badge bg-info">{{ current_user.institution_code }}</span></p>
+    <hr>
+    <h4>Certificate Overview</h4>
+    <div class="alert alert-info">
+        Total: <strong>{{ stats.total_certificates }}</strong> |
+        Verified: <strong>{{ stats.verified_certificates }}</strong>
+    </div>
+    <h5>Recent Certificates</h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Certificate ID</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Date</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cert in certificates[:10] %}
+            <tr>
+                <td>{{ cert.certificate_id }}</td>
+                <td>{{ cert.student_name }}</td>
+                <td>{{ cert.course_name }}</td>
+                <td>{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date else 'N/A' }}</td>
+                <td>{{ cert.certificate_type|title }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('auth_routes.upload') }}" class="btn btn-primary mt-3"><i class="fas fa-upload"></i> Upload Certificates</a>
+</div>
+{% endblock %}
