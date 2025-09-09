@@ -1,0 +1,6 @@
+student_name,course_name,issue_date,certificate_type,grade,credits
+Alice Johnson,Bachelor of Science,2025-01-10,degree,A,180
+Bob Smith,Data Science Certificate,2025-01-15,certificate,B+,30
+Carol Davis,Master of Arts,2025-01-20,degree,A-,120
+David Wilson,Python Programming,2025-01-25,certificate,A,15
+Eva Brown,Business Administration,2025-02-01,degree,B,200

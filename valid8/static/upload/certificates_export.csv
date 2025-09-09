@@ -1,0 +1,4 @@
+certificate_id,institution_id,institution_name,student_name,course_name,issue_date,completion_date,grade,credits,certificate_type,timestamp,hash
+CERT-TECH_UNIV_001-E7E3A9C1,TECH_UNIV_001,Tech University,John Doe,Master of Computer Science,2025-01-15,2024-12-20,A,120,degree,2025-09-08 18:34:38.193763,a194fefba9dbd04b80e42b2dd5f5b884b9b13c53f6e3c979e970672cfbea55b9
+CERT-TECH_UNIV_001-483A6183,TECH_UNIV_001,Tech University,Jane Smith,Bachelor of Business Administration,2025-02-01,2024-11-30,B+,180,degree,2025-09-08 18:34:38.193861,c7b18d54e44873c98a6885156f83cbeab130e8d34ac4a5163b4acb19dcb7e036
+CERT-BIZ_COLLEGE_002-DB833466,BIZ_COLLEGE_002,Business College,Mike Johnson,Python Programming Certificate,2025-01-20,,,0,certificate,2025-09-08 18:34:38.193973,662a9ea1733de9408748be7c061bad6da3d8f579bf83ce4db6cf30161b05011d
