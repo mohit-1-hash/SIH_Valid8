@@ -1,0 +1,43 @@
+<!-- cert_verification_system/app/templates/auth/institution_signup.html -->
+{% extends "base_template.html" %}
+{% block title %}Institution Signup - CertVerify{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="mb-4"><i class="fas fa-university text-primary"></i> Institution Registration</h2>
+                    <form action="{{ url_for('auth_routes.signup') }}" method="POST">
+                        <div class="mb-3">
+                            <label>Institution Name</label>
+                            <input type="text" class="form-control" name="institution_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Institution Code</label>
+                            <input type="text" class="form-control" name="institution_code" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Confirm Password</label>
+                            <input type="password" class="form-control" name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Register Institution</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
