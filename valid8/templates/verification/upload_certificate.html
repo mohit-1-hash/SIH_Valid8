@@ -1,0 +1,475 @@
+# Create certificate verification templates
+
+# Main certificate upload page (Page 1)
+upload_certificate_template = '''{% extends "base_template.html" %}
+
+{% block title %}Certificate Verification - CertVerify{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-custom">
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-shield-alt fa-4x text-primary mb-3"></i>
+                        <h1 class="display-4 fw-bold">Certificate Verification</h1>
+                        <p class="lead text-muted">Upload your certificate for instant verification using advanced AI and database technologies</p>
+                    </div>
+                    
+                    <!-- Verification Steps Indicator -->
+                    <div class="step-indicator">
+                        <div class="step active">
+                            <div class="step-number">1</div>
+                            <div>Upload</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div>Verify</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div>Result</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Form -->
+                    <form action="{{ url_for('verification_routes.verify_certificate') }}" method="POST" enctype="multipart/form-data" id="verificationForm">
+                        <!-- File Upload Zone -->
+                        <div class="upload-zone mb-4" id="uploadZone">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                            <h5>Drag & Drop your certificate here</h5>
+                            <p class="text-muted">or click to browse</p>
+                            <input type="file" name="certificate_file" id="certificateFile" class="d-none" accept=".pdf,.png,.jpg,.jpeg" required>
+                            <div id="uploadZoneFileName" class="mt-3"></div>
+                        </div>
+                        
+                        <!-- Optional Verification Link -->
+                        <div class="mb-4">
+                            <label for="verificationLink" class="form-label">
+                                <i class="fas fa-link me-2"></i>Verification Link (Optional)
+                            </label>
+                            <input type="url" class="form-control" id="verificationLink" name="verification_link" 
+                                   placeholder="https://verify.institution.edu/cert/...">
+                            <div class="form-text">If you have a verification link from the institution, enter it here for faster verification.</div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary-custom btn-custom btn-lg" id="verifyBtn">
+                                <i class="fas fa-search me-2"></i>Start Verification
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Supported Formats -->
+                    <div class="mt-5">
+                        <h6 class="text-muted mb-3">Supported Formats:</h6>
+                        <div class="row text-center">
+                            <div class="col-3">
+                                <i class="fas fa-file-pdf fa-2x text-danger mb-2"></i>
+                                <div>PDF</div>
+                            </div>
+                            <div class="col-3">
+                                <i class="fas fa-file-image fa-2x text-success mb-2"></i>
+                                <div>PNG</div>
+                            </div>
+                            <div class="col-3">
+                                <i class="fas fa-file-image fa-2x text-warning mb-2"></i>
+                                <div>JPG</div>
+                            </div>
+                            <div class="col-3">
+                                <i class="fas fa-file-image fa-2x text-info mb-2"></i>
+                                <div>JPEG</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature Highlights -->
+            <div class="text-center mt-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <i class="fas fa-lock fa-2x text-white mb-2"></i>
+                        <h6 class="text-white">Secure</h6>
+                        <small class="text-white-50">Your files are processed securely</small>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-bolt fa-2x text-white mb-2"></i>
+                        <h6 class="text-white">Fast</h6>
+                        <small class="text-white-50">Get results in seconds</small>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-check-double fa-2x text-white mb-2"></i>
+                        <h6 class="text-white">Accurate</h6>
+                        <small class="text-white-50">Advanced AI verification</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">How Certificate Verification Works</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-shield-alt text-primary me-2"></i>Verification Process</h6>
+                        <ol>
+                            <li>Watermark Detection</li>
+                            <li>Link Verification</li>
+                            <li>OCR Text Extraction</li>
+                            <li>Template Matching</li>
+                            <li>Digital Signature Check</li>
+                            <li>Database Verification</li>
+                            <li>Institution API Check</li>
+                            <li>Manual Verification</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle text-info me-2"></i>What You Get</h6>
+                        <ul>
+                            <li>Verification Status</li>
+                            <li>Certificate Details</li>
+                            <li>Authentication Report</li>
+                            <li>Fraud Detection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Help Button -->
+<div class="position-fixed bottom-0 end-0 p-3">
+    <button class="btn btn-info btn-lg rounded-circle" data-bs-toggle="modal" data-bs-target="#helpModal">
+        <i class="fas fa-question"></i>
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDropZone('uploadZone', 'certificateFile');
+        
+        document.getElementById('verificationForm').addEventListener('submit', function() {
+            showLoading('verifyBtn');
+        });
+    });
+</script>
+{% endblock %}'''
+
+# Verification results page
+verification_result_template = '''{% extends "base_template.html" %}
+
+{% block title %}Verification Result - CertVerify{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card card-custom">
+                <div class="card-body p-5">
+                    <!-- Progress Indicator -->
+                    <div class="step-indicator mb-5">
+                        <div class="step completed">
+                            <div class="step-number">1</div>
+                            <div>Upload</div>
+                        </div>
+                        <div class="step completed">
+                            <div class="step-number">2</div>
+                            <div>Verify</div>
+                        </div>
+                        <div class="step active">
+                            <div class="step-number">3</div>
+                            <div>Result</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verification Status -->
+                    {% if result.status == 'verified' %}
+                        <div class="verification-result verification-success">
+                            <i class="fas fa-check-circle fa-4x mb-3"></i>
+                            <h2>Certificate Verified ✓</h2>
+                            <p class="lead">This certificate is authentic and has been successfully verified.</p>
+                        </div>
+                    {% elif result.status == 'flag' %}
+                        <div class="verification-result verification-danger">
+                            <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
+                            <h2>Verification Failed ⚠️</h2>
+                            <p class="lead">This certificate could not be verified. Issues were detected during verification.</p>
+                        </div>
+                    {% elif result.status == 'manual_verification' %}
+                        <div class="verification-result verification-warning">
+                            <i class="fas fa-phone fa-4x mb-3"></i>
+                            <h2>Manual Verification Required 📞</h2>
+                            <p class="lead">Please contact the institution directly for verification.</p>
+                            {% if result.contact_info %}
+                            <div class="mt-3">
+                                <strong>Contact Information:</strong><br>
+                                📞 {{ result.contact_info.phone }}<br>
+                                {% if result.contact_info.email %}
+                                ✉️ {{ result.contact_info.email }}<br>
+                                {% endif %}
+                                {% if result.contact_info.office_hours %}
+                                🕒 {{ result.contact_info.office_hours }}
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="verification-result verification-warning">
+                            <i class="fas fa-question-circle fa-4x mb-3"></i>
+                            <h2>Verification Status Unknown</h2>
+                            <p class="lead">The verification process encountered an issue.</p>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Detailed Results -->
+                    <div class="row mt-5">
+                        <!-- Verification Steps -->
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-list-check me-2"></i>Verification Steps</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if result.verification_steps %}
+                                        {% for step in result.verification_steps %}
+                                            <div class="step-item">{{ step }}</div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="text-muted">No verification steps recorded.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificate Information -->
+                        <div class="col-lg-6">
+                            {% if result.certificate_data %}
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-info-circle me-2"></i>Certificate Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if result.certificate_data.student_name %}
+                                    <p><strong>Student Name:</strong> {{ result.certificate_data.student_name }}</p>
+                                    {% endif %}
+                                    {% if result.certificate_data.institution_name %}
+                                    <p><strong>Institution:</strong> {{ result.certificate_data.institution_name }}</p>
+                                    {% endif %}
+                                    {% if result.certificate_data.course_name %}
+                                    <p><strong>Course:</strong> {{ result.certificate_data.course_name }}</p>
+                                    {% endif %}
+                                    {% if result.certificate_data.year %}
+                                    <p><strong>Year:</strong> {{ result.certificate_data.year }}</p>
+                                    {% endif %}
+                                    {% if result.certificate_data.grade %}
+                                    <p><strong>Grade:</strong> {{ result.certificate_data.grade }}</p>
+                                    {% endif %}
+                                    {% if result.certificate_data.certificate_type %}
+                                    <p><strong>Type:</strong> {{ result.certificate_data.certificate_type|title }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Processing Information -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-cog me-2"></i>Processing Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Processing Time:</strong> {{ "%.2f"|format(result.processing_time) }} seconds</p>
+                                    <p><strong>Verification Method:</strong> 8-Step Comprehensive Process</p>
+                                    {% if result.verification_link_used %}
+                                    <p><strong>Link Verification:</strong> ✅ Used</p>
+                                    {% endif %}
+                                    <p><strong>Timestamp:</strong> {{ result.timestamp }}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Flags (if any) -->
+                            {% if result.flags %}
+                            <div class="card mt-3">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5><i class="fas fa-flag me-2"></i>Issues Detected</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% for flag in result.flags %}
+                                    <div class="alert alert-warning mb-2">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        {{ flag|replace('_', ' ')|title }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <a href="{{ url_for('verification_routes.index') }}" class="btn btn-outline-primary btn-custom w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Verify Another Certificate
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-outline-info btn-custom w-100" onclick="window.print()">
+                                <i class="fas fa-print me-2"></i>Print Report
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{{ url_for('verification_routes.search_certificates') }}" class="btn btn-outline-secondary btn-custom w-100">
+                                <i class="fas fa-search me-2"></i>Search Certificates
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+        body {
+            background: white !important;
+        }
+        
+        .navbar, .btn, .position-fixed {
+            display: none !important;
+        }
+        
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+        }
+    }
+</style>
+{% endblock %}'''
+
+# Search certificates page
+search_certificates_template = '''{% extends "base_template.html" %}
+
+{% block title %}Search Certificates - CertVerify{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card card-custom">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i class="fas fa-search me-2"></i>Search Certificates
+                    </h2>
+                    
+                    <!-- Search Form -->
+                    <form method="GET" action="{{ url_for('verification_routes.search_certificates') }}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" name="q" class="form-control" placeholder="Search by student name, institution, or course..." value="{{ query }}">
+                            </div>
+                            <div class="col-md-2">
+                                <select name="type" class="form-select">
+                                    <option value="all" {% if search_type == 'all' %}selected{% endif %}>All</option>
+                                    <option value="student" {% if search_type == 'student' %}selected{% endif %}>Student</option>
+                                    <option value="institution" {% if search_type == 'institution' %}selected{% endif %}>Institution</option>
+                                    <option value="course" {% if search_type == 'course' %}selected{% endif %}>Course</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary-custom btn-custom w-100">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Search Results -->
+                    {% if query %}
+                        <h5>Search Results for "{{ query }}" ({{ certificates|length }} found)</h5>
+                        
+                        {% if certificates %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Student Name</th>
+                                            <th>Institution</th>
+                                            <th>Course</th>
+                                            <th>Issue Date</th>
+                                            <th>Type</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cert in certificates %}
+                                        <tr>
+                                            <td><strong>{{ cert.student_name }}</strong></td>
+                                            <td>{{ cert.institution_name }}</td>
+                                            <td>{{ cert.course_name }}</td>
+                                            <td>{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date else 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ cert.certificate_type|title }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('verification_routes.verify_by_hash', certificate_hash=cert.certificate_hash) }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h4>No certificates found</h4>
+                                <p class="text-muted">Try different search terms or check the spelling.</p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                            <h4>Search Certificates Database</h4>
+                            <p class="text-muted">Enter search terms to find certificates in our verified database.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}'''
+
+# Save verification templates
+with open('cert_verification_system/app/templates/verification/upload_certificate.html', 'w') as f:
+    f.write(upload_certificate_template)
+
+with open('cert_verification_system/app/templates/verification/verification_result.html', 'w') as f:
+    f.write(verification_result_template)
+
+with open('cert_verification_system/app/templates/verification/search_certificates.html', 'w') as f:
+    f.write(search_certificates_template)
+
+print("✓ Certificate verification templates created:")
+print("  - app/templates/verification/upload_certificate.html")
+print("  - app/templates/verification/verification_result.html") 
+print("  - app/templates/verification/search_certificates.html")
