@@ -1,0 +1,50 @@
+<!-- cert_verification_system/app/templates/verification/search_certificates.html -->
+{% extends "base_template.html" %}
+{% block title %}Search Certificates - CertVerify{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('verification_routes.search_certificates') }}" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search by student/institution/course..." value="{{ query }}">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            {% if query %}
+                <h5>Search Results for "{{ query }}" ({{ certificates|length }})</h5>
+                {% if certificates %}
+                    <table class="table table-bordered mt-2">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Institution</th>
+                                <th>Course</th>
+                                <th>Issue Date</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for cert in certificates %}
+                            <tr>
+                                <td>{{ cert.student_name }}</td>
+                                <td>{{ cert.institution_name }}</td>
+                                <td>{{ cert.course_name }}</td>
+                                <td>{{ cert.issue_date.strftime('%Y-%m-%d') if cert.issue_date else 'N/A' }}</td>
+                                <td>{{ cert.certificate_type|title }}</td>
+                                <td><a href="{{ url_for('verification_routes.verify_by_hash', certificate_hash=cert.certificate_hash) }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye"></i> View</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="alert alert-warning">No certificates found for your search.</div>
+                {% endif %}
+            {% else %}
+                <div class="text-secondary text-center p-3">Enter a search term to look up certificates.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
