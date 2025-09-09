@@ -1,0 +1,32 @@
+<!-- cert_verification_system/app/templates/auth/certificate_upload.html -->
+{% extends "base_template.html" %}
+{% block title %}Upload Certificates - CertVerify{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4"><i class="fas fa-upload text-primary"></i> Upload Certificates</h2>
+    <form action="{{ url_for('auth_routes.upload') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="upload_type" value="single">
+        <div class="mb-3"><label>Student Name</label><input type="text" name="student_name" class="form-control" required></div>
+        <div class="mb-3"><label>Course Name</label><input type="text" name="course_name" class="form-control" required></div>
+        <div class="mb-3"><label>Issue Date</label><input type="date" name="issue_date" class="form-control" required></div>
+        <div class="mb-3"><label>Certificate Type</label>
+            <select name="certificate_type" class="form-select" required>
+                <option value="degree">Degree</option>
+                <option value="diploma">Diploma</option>
+                <option value="certificate">Certificate</option>
+                <option value="transcript">Transcript</option>
+            </select>
+        </div>
+        <div class="mb-3"><label>Grade (optional)</label><input type="text" name="grade" class="form-control"></div>
+        <div class="mb-3"><label>Certificate File</label><input type="file" name="certificate_file" class="form-control" required></div>
+        <button type="submit" class="btn btn-success w-100">Upload</button>
+    </form>
+    <hr>
+    <h5>Bulk Upload (CSV)</h5>
+    <form action="{{ url_for('auth_routes.upload') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="upload_type" value="bulk">
+        <input type="file" name="bulk_file" class="form-control" accept=".csv" required>
+        <button type="submit" class="btn btn-secondary w-100 mt-2">Bulk Upload</button>
+    </form>
+</div>
+{% endblock %}
