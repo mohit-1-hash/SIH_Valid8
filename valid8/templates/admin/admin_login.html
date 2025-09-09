@@ -1,0 +1,28 @@
+<!-- cert_verification_system/app/templates/admin/admin_login.html -->
+{% extends "base_template.html" %}
+{% block title %}Admin Login - CertVerify{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="mb-4"><i class="fas fa-shield-alt text-danger"></i> Admin Login</h2>
+                    <form action="{{ url_for('admin_routes.admin_login') }}" method="POST">
+                        <div class="mb-3">
+                            <label>Admin Username</label>
+                            <input type="text" class="form-control" name="username" value="admin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Admin Password</label>
+                            <input type="password" class="form-control" name="password" value="admin123" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">Admin Login</button>
+                    </form>
+                    <div class="mt-3 text-center text-muted">Demo: admin / admin123</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
