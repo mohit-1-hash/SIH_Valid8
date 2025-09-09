@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Certificate Verification System{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-custom {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            border: none;
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .upload-zone {
+            border: 3px dashed #ddd;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--success-color);
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+            z-index: -1;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.active::after {
+            background: var(--secondary-color);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .step.active .step-number {
+            background: var(--secondary-color);
+        }
+
+        .step.completed .step-number {
+            background: var(--success-color);
+        }
+
+        .verification-result {
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .verification-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .verification-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .verification-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .step-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .upload-zone {
+                padding: 20px;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .step::after {
+                display: none;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('verification_routes.index') }}">
+                <i class="fas fa-shield-alt me-2"></i>
+                CertVerify
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('verification_routes.index') }}">
+                            <i class="fas fa-home me-1"></i>Verify Certificate
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth_routes.login') }}">
+                            <i class="fas fa-university me-1"></i>Institution Portal
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('verification_routes.search_certificates') }}">
+                            <i class="fas fa-search me-1"></i>Search Certificates
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>
+                                {% if current_user.user_type == 'admin' %}Admin{% else %}{{ current_user.institution_name }}{% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if current_user.user_type == 'institution' %}
+                                    <li><a class="dropdown-item" href="{{ url_for('auth_routes.dashboard') }}">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('auth_routes.upload') }}">Upload Certificates</a></li>
+                                {% elif current_user.user_type == 'admin' %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_routes.dashboard') }}">Admin Dashboard</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth_routes.logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_routes.admin_login') }}">
+                                <i class="fas fa-cog me-1"></i>Admin
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 text-center text-white-50">
+        <div class="container">
+            <p>&copy; 2024 CertVerify - Secure Certificate Verification System</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Global JavaScript functions
+        function showLoading(elementId, originalText = null) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                if (!originalText) {
+                    element.setAttribute('data-original-text', element.innerHTML);
+                }
+                element.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+                element.disabled = true;
+            }
+        }
+
+        function hideLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const originalText = element.getAttribute('data-original-text') || 'Submit';
+                element.innerHTML = originalText;
+                element.disabled = false;
+            }
+        }
+
+        // File drag and drop functionality
+        function initializeDropZone(dropZoneId, fileInputId) {
+            const dropZone = document.getElementById(dropZoneId);
+            const fileInput = document.getElementById(fileInputId);
+
+            if (!dropZone || !fileInput) return;
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    updateFileName(dropZoneId + 'FileName', files[0].name);
+                }
+            });
+
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    updateFileName(dropZoneId + 'FileName', e.target.files[0].name);
+                }
+            });
+        }
+
+        function updateFileName(elementId, fileName) {
+            const fileNameDisplay = document.getElementById(elementId);
+            if (fileNameDisplay) {
+                fileNameDisplay.innerHTML = `<i class="fas fa-file me-2 text-success"></i><strong>${fileName}</strong>`;
+            }
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
