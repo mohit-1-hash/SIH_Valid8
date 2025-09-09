@@ -1,0 +1,48 @@
+<!-- cert_verification_system/app/templates/admin/admin_dashboard.html -->
+{% extends "base_template.html" %}
+{% block title %}Admin Dashboard - CertVerify{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h1><i class="fas fa-shield-alt"></i> Admin Dashboard</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <i class="fas fa-flag text-danger fa-2x mb-2"></i>
+                    <h3>{{ stats.total_flags }}</h3>
+                    <p>Total Flags</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-warning">
+                <div class="card-body">
+                    <i class="fas fa-exclamation-triangle text-warning fa-2x mb-2"></i>
+                    <h3>{{ stats.high_priority_flags }}</h3>
+                    <p>High Priority</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <i class="fas fa-search text-info fa-2x mb-2"></i>
+                    <h3>{{ stats.total_verification_attempts }}</h3>
+                    <p>Verifications</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <i class="fas fa-university text-success fa-2x mb-2"></i>
+                    <h3>{{ stats.total_institutions }}</h3>
+                    <p>Institutions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Recent Flags and Attempts would be here as in previous code -->
+    <!-- ... -->
+</div>
+{% endblock %}
